@@ -1,0 +1,27 @@
+{
+  "name": "talk-lmc-reactive-conf-2019",
+  "version": "1.0.0",
+  "description": "Talk about Reactive Conf 2019",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "npm run build:site && npm run build:pdf && npm run build:preview",
+    "build:site": "mdx-deck build deck.mdx",
+    "build:preview": "mdx-deck-export png deck.mdx",
+    "build:pdf": "mdx-deck-export pdf deck.mdx",
+    "build:preview2": "npx capture-website-cli http://localhost:8000 deck.png",
+    "start": "mdx-deck deck.mdx",
+    "format": "prettier --write '{,!(dist)/**/}*.{js,json,mdx}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/literat/talk-lmc-reactive-conf-2019.git"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/literat/talk-lmc-reactive-conf-2019#readme",
+  "devDependencies": {
+    "@mdx-deck/export": "^2.5.1",
+    "mdx-deck": "^3.1.0",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.1"
+  }
+}

@@ -1,5 +1,15 @@
 import { Notes, Head, Appear } from "mdx-deck";
 import lmcLogo from './images/lmc-logo.png';
+import zeroConfiguration from './images/stdout-error-mode.jpg';
+import webpackMerge from './images/webpack-merge.png';
+import newStack from './images/new-stack.png';
+import onPremises from './images/on-premises.png';
+import cloud from './images/cloud.png';
+import serverless from './images/serverless.png';
+import evolution from './images/evolution.png';
+import fullstackServerless from './images/fullstack-serverless.png';
+import fullstackServerless2 from './images/fullstack-serverless2.png';
+import tools from './images/tools.png';
 import { default as customTheme } from "./src/theme";
 export const theme = customTheme;
 
@@ -26,6 +36,10 @@ _by Tomáš Litera_
 
 ---
 
+1 Practical One
+
+---
+
 ### Secret Tips to Improve Your Webpack Configuration
 
 #### Sean Larkin & Johannes Ewald
@@ -36,57 +50,244 @@ https://www.youtube.com/watch?v=J3GqBkw6ebk
 
 #1 zero configuration
 
+<img src={zeroConfiguration} />
+
 ---
 
 #2 typescript in webpack configuration
+
+* Step 1: Rename your webpack.config.js to webpack.config.ts.
+* Step 2: Install @types/webpack and ts-node.
+* Step 3: Create a variable using the webpack.Configuration type:
 
 ---
 
 #3 Functions as config
 
+* you can pass arguments
+
+```javascript
+webpack --env.mode=production --env.debug
+```
+
+```javascript
+module.exports = (env = {}) => {
+    const {
+        mode = "development",
+        debug = false,
+    } = env;
+
+    return {
+        mode,
+        output: {
+            pathinfo: debug === true,
+        },
+    };
+};
+```
+
 ---
 
-#4 Multicompiler mode - isomorphic javascript
+#4 Multicompiler mode
+
+* multiple configurastions - isomorphic javascript
+
+```javascript
+module.exports = [
+    {
+        name: "web",
+        target: "web",
+        output: {
+            path: resolve(__dirname, "dist", "web"),
+        },
+    },
+    {
+        name: "node",
+        target: "node",
+        output: {
+            path: resolve(__dirname, "dist", "node"),
+        },
+    },
+];
+```
 
 ---
 
 #5 Async webpack configs
 
+```javascript
+module.exports = async () => {
+    const languages = await loadLanguagesFromProvider();
+
+    return Object
+        .entries(languages)
+        .map(([language, translations]) => ({
+            /* ...*/
+        }));
+};
+```
+
 ---
 
 #6 Use nodemon
+
+* watch only webpack config files
+
+```javascript
+nodemon --watch webpack.config.js --exec "webpack --watch"
+```
 
 ---
 
 #7 Use require.resolve()
 
+* when referencing absolute paths
+
+```javascript
+module.exports = {
+    resolve: {
+        alias: {
+            // Each require.resolve() will throw an error if the module cannot be found
+            [require.resolve("./src/index.js")]: require.resolve("./src/replaced.js"),
+        },
+    },
+};
+```
+
 ---
 
 #8 Use .filter(Boolean)
+
+* to remove unwanted loaders or plugins depending on the env
+
+```javascript
+module.exports = {
+    module: {
+        rules: [
+            isDev && {
+                test: /\.css$/,
+                loader: "style-loader",
+            },
+        ].filter(Boolean),
+    },
+    plugins: [
+        analyze && new BundleAnalyzerPlugin(),
+    ].filter(Boolean),
+};
+```
 
 ---
 
 #9 Avoid config logic - webpack merge
 
+<img src={webpackMerge} width={1200} />
+
 ---
 
 #10 Use module.rules[].oneOf
+
+* The order of rules is important
+* Loaders are executed from bottom to top and from right to left
+* Every rule that matches gets applied
+
+```javascript
+rules: [{
+        oneOf: [{
+            use: ["a-loader", "b-loader"],
+        }, {
+            use: ["c-loader"],
+        }],
+    }],
+```
 
 ---
 
 #11 test for file extensions, include for absolute path
 
+```javascript
+rules: [{
+        include: [path.resolve(__dirname, "src")],
+        test: [/\.ts$/, /\.tsx$/],
+        use: ["ts-loader"],
+    }, {
+        include: [path.resolve(__dirname, "src")],
+        test: [/\.css$/],
+        use: ["css-loader"],
+    }],
+```
+
 ---
 
 #12 "How to applydifferent loaders on the same module" Pt. 1
+
+react-svg-loader
+
+---
+
+```javascript
+<svg height="100" width="100">
+  <circle cx="50" cy="50" r="40" fill="red" />
+</svg>
+```
+
+```javascript
+export default () => (
+    <svg height="100" width="100">
+      <circle cx="50" cy="50" r="40" fill="red" />
+    </svg>
+);
+```
+
+---
+
+```javascript
+import CircleComponent from "./circle.svg?component";
+
+const component = <CircleComponent />;
+```
+
+---
+
+```javascript
+rules: [{
+        oneOf: [{
+            test: /\.svg$/,
+            resourceQuery: "?component",
+            use: ["react-svg-loader"],
+        },
+        {
+            test: /\.svg$/,
+            use: ["file-loader"],
+        }]
+    }],
+```
 
 ---
 
 #12 "How to applydifferent loaders on the same module" Pt. 2
 
+```javascript
+rules: [{
+        oneOf: [{
+            test: /\.svg$/,
+            // issuer matches on the importing module
+            issuer: /\.jsx?$/,
+            use: ["react-svg-loader"],
+        },
+        {
+            test: /\.svg$/,
+            use: ["file-loader"],
+        }]
+    }],
+```
+
 ---
 
 https://github.com/jhnns/webpack-config-tips
+
+---
+
+2 Teoretical One
 
 ---
 
@@ -103,19 +304,49 @@ What does fullstack mean in the era of serverless computing.
 ---
 
 Frontend
-old Stack
-- html
-- css
-- jQuery
-new stack
 
 ---
 
-backend
-old times
-- on premises
-cloud
-serverless
+Old Stack
+* html
+* css
+* jQuery
+
+---
+
+<img src={newStack} width={1200} />
+
+---
+
+Backend
+
+---
+
+<img src={onPremises} width={1200} />
+
+---
+
+<img src={cloud} width={1200} />
+
+---
+
+<img src={serverless} width={1200} />
+
+---
+
+<img src={evolution} width={1200} />
+
+---
+
+<img src={fullstackServerless2} width={1200} />
+
+---
+
+<img src={fullstackServerless} width={1200} />
+
+---
+
+<img src={tools} width={1200} />
 
 ---
 

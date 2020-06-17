@@ -11,5 +11,12 @@ export default {
   colors: {
     text: "#003e7e"
   },
+  styles: {
+    Slide: {
+      pre: {
+        'font-size': '29px',
+      }
+    }
+  },
   Provider
 };
